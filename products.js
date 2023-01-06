@@ -19,11 +19,10 @@ const app = {
     },
     methods: {
         getData() {
-
-            const token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-            console.log(token);
+            
+            // console.log(token);
             // header 夾帶 token
-            axios.defaults.headers.common['Authorization'] = token;
+            
             axios.get(`${url}/api/${path}/admin/products`)
                 .then((res) => {
                     if (res.data.products.length == 0){
@@ -36,10 +35,23 @@ const app = {
                 .catch((err) => {
                     console.log(err);
                 })
+        },
+        checkLogin(){
+            const token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+            axios.defaults.headers.common['Authorization'] = token;
+            // https://vue3-course-api.hexschool.io/v2/api/user/check
+            axios.post(`${url}/api/user/check`)
+                 .then(() => {
+                    this.getData();
+                 })
+                 .catch((err) => {
+                    alert("未登入");
+                    window.location = 'index.html'
+                 })
         }
     },
     mounted() {
-        this.getData();
+        this.checkLogin();
     }
 }
 // 2. 生成 Vue 應用程式
